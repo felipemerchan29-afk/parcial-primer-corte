@@ -1,0 +1,7 @@
+import Data.List (sortBy)
+
+ordenar :: [(String,Double)] -> [(String,Double)]
+ordenar = sortBy (\(n1,s1) (n2,s2) ->
+                   if s1 == s2 then compare n1 n2 else compare s2 s1)
+
+main = print (ordenar [("Ana",8.5),("Luis",9.0),("Carlos",9.0),("Bea",7.2)])
