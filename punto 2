@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char *nombre;
+    int activo;
+} Est;
+
+typedef struct {
+    Est **arr;
+    int n;
+} DB;
+
+DB *crearDB() {
+    DB *db = malloc(sizeof(DB));
+    db->arr = NULL;
+    db->n = 0;
+    return db;
+}
+
+char* copiarCadena(const char *s) {
+    char *d = malloc(strlen(s)+1); // +1 para el '\0'
+    if (d) strcpy(d,s);
+    return d;
+}
+
+void agregar(DB *db,int id,const char *nombre) {
+    db->arr = realloc(db->arr,(db->n+1)*sizeof(Est*));
+    Est *e = malloc(sizeof(Est));
+    e->id=id; e->activo=1;
+    e->nombre=copiarCadena(nombre);
+    db->arr[db->n++]=e;
+}
+
+void eliminar(DB *db,int id) {
+    for(int i=0;i<db->n;i++) {
+        if(db->arr[i]->id==id) db->arr[i]->activo=0;
+    }
+}
+
+void compactar(DB *db) {
+    int j=0;
+    for(int i=0;i<db->n;i++) {
+        if(db->arr[i]->activo) {
+            db->arr[j++]=db->arr[i];
+        } else {
+            free(db->arr[i]->nombre);
+            free(db->arr[i]);
+        }
+    }
+    db->n=j;
+    db->arr=realloc(db->arr,j*sizeof(Est*));
+}
+
+void imprimir(DB *db) {
+    for(int i=0;i<db->n;i++) {
+        printf("ID:%d %s\n",db->arr[i]->id,db->arr[i]->nombre);
+    }
+}
+
+int main() {
+    DB *db=crearDB();
+    agregar(db,1,"Andres");
+    agregar(db,2,"Felipe");
+    imprimir(db);
+
+    printf("\nEliminando ID 1...\n");
+    eliminar(db,1);
+    compactar(db);
+    imprimir(db);
+
+    for(int i=0;i<db->n;i++) {
+        free(db->arr[i]->nombre);
+        free(db->arr[i]);
+    }
+    free(db->arr);
+    free(db);
+
+    return 0;
+}
