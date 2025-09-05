@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char nombre[20];
+    double nota;
+} Alumno;
+
+int cmp(const void *a, const void *b) {
+    const Alumno *A = (const Alumno*)a;
+    const Alumno *B = (const Alumno*)b;
+    if (A->nota < B->nota) return 1;
+    if (A->nota > B->nota) return -1;
+    return strcmp(A->nombre, B->nombre);
+}
+
+int main() {
+    Alumno arr[] = {{"Andres",8.5},{"felipe",9.0},{"juan",9.0},{"sofia",7.2}};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    qsort(arr,n,sizeof(Alumno),cmp);
+    for(int i=0;i<n;i++) {
+        printf("%s %.1f\n",arr[i].nombre,arr[i].nota);
+    }
+    return 0;
+}
